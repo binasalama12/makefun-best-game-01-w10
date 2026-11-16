@@ -224,7 +224,7 @@ function drawGem(cx, cy, cell, scale = 1) {
     ctx.beginPath(); ctx.moveTo(0, -R); ctx.lineTo(0, R); ctx.moveTo(-R * 0.85, -R * 0.25); ctx.lineTo(R * 0.85, -R * 0.25); ctx.stroke();
   } else if (t === 2) { // mushroom
     ctx.beginPath(); ctx.arc(0, -4, R, Math.PI, 0); ctx.quadraticCurveTo(R * 0.4, 6, R * 0.35, 10); ctx.lineTo(-R * 0.35, 10); ctx.quadraticCurveTo(-R * 0.4, 6, -R, -4); ctx.fill();
-    ctx.shadowBlur = 0; ctx.fillStyle = '#fff7e6'; rr(-9, 8, 18, 15, 6); ctx.fill();
+    ctx.shadowBlur = 0; ctx.fillStyle = '#f7ead2'; rr(-6, 9, 12, 11, 5); ctx.fill();
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
     for (const [dx, dy, r] of [[-11, -13, 4.5], [7, -18, 3.6], [13, -8, 3]]) { ctx.beginPath(); ctx.arc(dx, dy, r, 0, 7); ctx.fill(); }
   } else if (t === 3) { // flame
@@ -349,8 +349,8 @@ function drawParticles() {
   }
   ctx.globalAlpha = 1;
 }
-function panel(title, sub, lines, accent) {
-  ctx.fillStyle = 'rgba(10,5,2,0.62)'; ctx.fillRect(0, 0, W, H);
+function panel(title, sub, lines, accent, dim = true) {
+  if (dim) { ctx.fillStyle = 'rgba(10,5,2,0.62)'; ctx.fillRect(0, 0, W, H); }
   ctx.fillStyle = '#241207'; rr(330, 218, 620, 330, 22); ctx.fill();
   ctx.strokeStyle = accent; ctx.lineWidth = 3; rr(330, 218, 620, 330, 22); ctx.stroke();
   ctx.textAlign = 'center'; ctx.fillStyle = accent; ctx.font = '900 52px system-ui';
@@ -365,10 +365,10 @@ function draw() {
   drawBackground(); drawBoard(); drawCauldron(); drawHUD(); drawParticles();
   if (S.comboTimer > 0) S.comboTimer--;
   if (S.screen === 'title') panel("ALCHEMIST'S CASCADE", 'A potion match-3 — brew the great elixir!',
-    ['Click a gem, then a neighbour — or drag — to swap.', 'Match 3+ to burst ingredients into the cauldron.', 'Cascades multiply your combo. Reach 1,500 in 30 moves!', 'Keys: arrows + Enter to swap · R restarts', 'Click anywhere to start brewing'], '#ffd166');
-  if (S.screen === 'end' && S.endKind === 'win') panel('🍵 BREW COMPLETE!', `The great elixir is ready — score ${S.score}!`,
+    ['Click a gem, then a neighbour — or drag — to swap.', 'Match 3+ to burst ingredients into the cauldron.', 'Cascades multiply your combo. Reach 1,500 in 30 moves!', 'Keys: arrows + Enter to swap · R restarts', 'Click anywhere to start brewing'], '#ffd166', false);
+  if (S.screen === 'end' && S.endKind === 'win') panel('BREW COMPLETE!', `The great elixir is ready — score ${S.score}!`,
     [`Target ${TARGET} reached with ${S.moves} moves to spare.`, 'The cauldron bubbles over with rainbow brew.', 'Press R or click to brew again'], '#7CFC9A');
-  if (S.screen === 'end' && S.endKind === 'lose') panel('💨 THE BREW FIZZLED…', `Out of moves at ${S.score} / ${TARGET}.`,
+  if (S.screen === 'end' && S.endKind === 'lose') panel('THE BREW FIZZLED…', `Out of moves at ${S.score} / ${TARGET}.`,
     ['So close — the cauldron cools and the candles dim.', 'Chain cascades and bomb flasks to score faster.', 'Press R or click to try again'], '#fca5a5');
 }
 
@@ -384,15 +384,15 @@ function stageShot(name) {
     S.floats.push({ x: BX + 240, y: BY + 130, text: 'COMBO x2', life: 1, color: '#ff9ff3', size: 34 });
   }
   if (name === 'feature') {
-    S.screen = 'play'; S.score = 1180; S.moves = 12; S.combo = 4; S.comboTimer = 999; S.brewGlow = 1;
-    S.board[3][4].s = 1; S.board[5][6].s = 2;
+    S.screen = 'play'; S.score = 1180; S.moves = 12; S.combo = 4; S.comboTimer = 0; S.brewGlow = 1;
+    S.board[6][1].s = 1; S.board[5][6].s = 2;
     // mid-cascade: clear a cluster visually + dense particles
     for (const [x, y] of [[3, 3], [4, 3], [5, 3], [4, 2], [4, 4]]) {
       const [cx, cy] = cellCenter(x, y); const t = S.board[y][x].t;
       burst(cx, cy, COLORS[t].main, 22, 3.6); burst(cx, cy, COLORS[t].light, 10, 2.2); burst(cx, cy, '#ffffff', 5, 1.6);
       S.board[y][x] = null;
     }
-    S.floats.push({ x: 640, y: 140, text: '✦ CASCADE COMBO x4 ✦', life: 1, color: '#ffd166', size: 44 });
+    S.floats.push({ x: 640, y: 160, text: '✦ CASCADE COMBO x4 ✦', life: 1, color: '#ffd166', size: 40 });
     S.floats.push({ x: BX + 240, y: BY + 110, text: '+480', life: 1, color: '#7CFC9A', size: 34 });
   }
   if (name === 'end') {
