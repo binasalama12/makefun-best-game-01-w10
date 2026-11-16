@@ -9,12 +9,12 @@ const CELL = 60, GAP = 4, STEP = CELL + GAP;
 const BX = 250, BY = 168; // board origin
 const TARGET = 1500, MAXMOVES = 30;
 const COLORS = [
-  { name: 'herb', main: '#37d353', dark: '#147a2e', light: '#a7f3b8' },
-  { name: 'crystal', main: '#22c8e5', dark: '#0e6e8c', light: '#b3f0ff' },
-  { name: 'mushroom', main: '#ef4444', dark: '#991b1b', light: '#fecaca' },
-  { name: 'flame', main: '#f97316', dark: '#9a3412', light: '#fed7aa' },
-  { name: 'droplet', main: '#3b82f6', dark: '#1e3a8a', light: '#bfdbfe' },
-  { name: 'star vial', main: '#a855f7', dark: '#6b21a8', light: '#e9d5ff' },
+  { name: 'herb', main: '#3ee065', dark: '#1c9440', light: '#c2ffd0' },
+  { name: 'crystal', main: '#2fd4f5', dark: '#1280a3', light: '#c9f6ff' },
+  { name: 'mushroom', main: '#fb5151', dark: '#b91c1c', light: '#ffd9d9' },
+  { name: 'flame', main: '#ff8a2a', dark: '#b44a12', light: '#ffe3b3' },
+  { name: 'droplet', main: '#4d94ff', dark: '#2547a8', light: '#d3e6ff' },
+  { name: 'star vial', main: '#bb6bff', dark: '#7e2bb8', light: '#f2e2ff' },
 ];
 const params = new URLSearchParams(location.search);
 const shot = params.get('shot');
@@ -165,11 +165,13 @@ addEventListener('keydown', e => {
 function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
 function drawBackground() {
   const g = ctx.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, '#2b1a10'); g.addColorStop(0.6, '#1d110a'); g.addColorStop(1, '#120906');
+  g.addColorStop(0, '#503118'); g.addColorStop(0.6, '#3a2110'); g.addColorStop(1, '#26150a');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   // wood planks
-  ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgba(0,0,0,0.22)'; ctx.lineWidth = 2;
   for (let x = 0; x < W; x += 86) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  ctx.strokeStyle = 'rgba(255,205,130,0.07)'; ctx.lineWidth = 1;
+  for (let x = 43; x < W; x += 86) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
   // shelves with bottles (left + top-right areas)
   drawShelf(28, 150, 190); drawShelf(28, 330, 190); drawShelf(28, 510, 190);
   drawShelf(830, 96, 400);
@@ -177,40 +179,44 @@ function drawBackground() {
   drawCandle(96, 640); drawCandle(160, 652); drawCandle(1180, 640);
   // warm candle glow
   const glow = ctx.createRadialGradient(640, 400, 60, 640, 400, 760);
-  glow.addColorStop(0, 'rgba(255,170,60,0.14)'); glow.addColorStop(1, 'rgba(255,170,60,0)');
+  glow.addColorStop(0, 'rgba(255,180,70,0.26)'); glow.addColorStop(1, 'rgba(255,170,60,0)');
   ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
   // floor
-  ctx.fillStyle = '#241207'; ctx.fillRect(0, 716, W, 84);
-  ctx.strokeStyle = 'rgba(255,190,90,0.15)'; ctx.beginPath(); ctx.moveTo(0, 716); ctx.lineTo(W, 716); ctx.stroke();
+  ctx.fillStyle = '#3a2110'; ctx.fillRect(0, 716, W, 84);
+  ctx.strokeStyle = 'rgba(255,190,90,0.28)'; ctx.beginPath(); ctx.moveTo(0, 716); ctx.lineTo(W, 716); ctx.stroke();
 }
 function drawShelf(x, y, w) {
   const rngB = createRandom(x * 31 + y);
-  ctx.fillStyle = '#4a2c14'; rr(x - 8, y + 52, w + 16, 12, 4); ctx.fill();
-  ctx.fillStyle = '#5d3a1c'; rr(x - 8, y + 52, w + 16, 5, 3); ctx.fill();
+  ctx.fillStyle = '#6e4520'; rr(x - 8, y + 52, w + 16, 12, 4); ctx.fill();
+  ctx.fillStyle = '#845631'; rr(x - 8, y + 52, w + 16, 5, 3); ctx.fill();
   let bx = x;
   while (bx < x + w - 26) {
     const bw = 18 + rngB() * 14, bh = 32 + rngB() * 20;
     const col = COLORS[randInt(rngB, 6)];
-    ctx.fillStyle = col.dark; rr(bx, y + 52 - bh, bw, bh, 6); ctx.fill();
-    ctx.fillStyle = col.main; rr(bx + 3, y + 55 - bh, bw - 6, bh - 10, 5); ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.5)'; rr(bx + bw * 0.62, y + 48 - bh, 4, bh - 18, 2); ctx.fill();
-    ctx.fillStyle = '#c9a06a'; ctx.fillRect(bx + bw / 2 - 4, y + 48 - bh, 8, 6);
+    ctx.fillStyle = col.main; rr(bx, y + 52 - bh, bw, bh, 6); ctx.fill();
+    ctx.fillStyle = col.light; rr(bx + 3, y + 55 - bh, bw - 6, bh * 0.38, 5); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.8)'; rr(bx + bw * 0.62, y + 48 - bh, 4, bh - 18, 2); ctx.fill();
+    ctx.fillStyle = '#e0b878'; ctx.fillRect(bx + bw / 2 - 4, y + 48 - bh, 8, 6);
     bx += bw + 8 + rngB() * 10;
   }
 }
 function drawCandle(x, y) {
   const fl = 3 + Math.sin(S.time * 0.11 + x) * 1.6;
-  ctx.fillStyle = '#e8dcc0'; rr(x - 7, y, 14, 44, 4); ctx.fill();
-  const fg = ctx.createRadialGradient(x, y - 14, 2, x, y - 14, 30 + fl);
-  fg.addColorStop(0, 'rgba(255,220,120,0.95)'); fg.addColorStop(0.35, 'rgba(255,150,40,0.55)'); fg.addColorStop(1, 'rgba(255,120,20,0)');
-  ctx.fillStyle = fg; ctx.beginPath(); ctx.arc(x, y - 14, 30 + fl, 0, 7); ctx.fill();
+  ctx.fillStyle = '#f4ead2'; rr(x - 7, y, 14, 44, 4); ctx.fill();
+  const fg = ctx.createRadialGradient(x, y - 14, 2, x, y - 14, 46 + fl);
+  fg.addColorStop(0, 'rgba(255,224,130,0.95)'); fg.addColorStop(0.35, 'rgba(255,160,50,0.6)'); fg.addColorStop(1, 'rgba(255,120,20,0)');
+  ctx.fillStyle = fg; ctx.beginPath(); ctx.arc(x, y - 14, 46 + fl, 0, 7); ctx.fill();
   ctx.fillStyle = '#ffdf7e'; ctx.beginPath(); ctx.ellipse(x, y - 12, 5, 9 + fl, 0, 0, 7); ctx.fill();
 }
 function drawGem(cx, cy, cell, scale = 1) {
-  const { t, s } = cell; const c = COLORS[t]; const R = 24 * scale;
+  const { t, s } = cell; const c = COLORS[t]; const R = 26 * scale;
   ctx.save(); ctx.translate(cx, cy);
+  // halo so the gem reads at small (dossier) scale
+  const halo = ctx.createRadialGradient(0, 0, 2, 0, 0, R + 9);
+  halo.addColorStop(0, c.main + '55'); halo.addColorStop(1, c.main + '00');
+  ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(0, 0, R + 9, 0, 7); ctx.fill();
   // flask body glow
-  ctx.shadowColor = c.main; ctx.shadowBlur = 12;
+  ctx.shadowColor = c.main; ctx.shadowBlur = 18;
   const body = ctx.createRadialGradient(-8, -10, 4, 0, 0, R + 4);
   body.addColorStop(0, c.light); body.addColorStop(0.45, c.main); body.addColorStop(1, c.dark);
   ctx.fillStyle = body;
@@ -242,14 +248,17 @@ function drawGem(cx, cy, cell, scale = 1) {
     ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.beginPath(); ctx.arc(-6, -8, 4, 0, 7); ctx.fill();
   }
   ctx.shadowBlur = 0;
-  // gloss
-  ctx.fillStyle = 'rgba(255,255,255,0.35)';
-  ctx.beginPath(); ctx.ellipse(-9, -13, 8, 5, -0.6, 0, 7); ctx.fill();
+  // gloss + facet sparkle
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.beginPath(); ctx.ellipse(-10, -14, 10, 6, -0.6, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.beginPath(); ctx.arc(9, -15, 3.2, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.arc(-13, 6, 2.2, 0, 7); ctx.fill();
   if (s === 1) { // bomb flask ring
-    ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.arc(0, 0, R + 4, 0, 7); ctx.stroke();
+    ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.arc(0, 0, R + 3, 0, 7); ctx.stroke();
     ctx.fillStyle = '#ffd166'; ctx.font = 'bold 15px system-ui'; ctx.textAlign = 'center'; ctx.fillText('💣', 0, -R - 6);
   } else if (s === 2) { // rainbow elixir ring
-    ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(0, 0, R + 4, 0, 7);
+    ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(0, 0, R + 3, 0, 7);
     ctx.strokeStyle = `hsl(${(S.time * 4) % 360} 90% 65%)`; ctx.stroke();
     ctx.font = '15px system-ui'; ctx.textAlign = 'center'; ctx.fillText('🌈', 0, -R - 6);
   }
@@ -257,11 +266,11 @@ function drawGem(cx, cy, cell, scale = 1) {
 }
 function drawBoard() {
   // board frame: wooden table + parchment inset
-  ctx.fillStyle = '#3a2110'; rr(BX - 18, BY - 18, COLS * STEP + 14, ROWS * STEP + 14, 16); ctx.fill();
-  ctx.fillStyle = '#170d06'; rr(BX - 10, BY - 10, COLS * STEP - 2, ROWS * STEP - 2, 12); ctx.fill();
+  ctx.fillStyle = '#54341a'; rr(BX - 18, BY - 18, COLS * STEP + 14, ROWS * STEP + 14, 16); ctx.fill();
+  ctx.fillStyle = '#221105'; rr(BX - 10, BY - 10, COLS * STEP - 2, ROWS * STEP - 2, 12); ctx.fill();
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
     const px = BX + x * STEP, py = BY + y * STEP;
-    ctx.fillStyle = (x + y) % 2 ? 'rgba(255,205,120,0.07)' : 'rgba(255,205,120,0.13)';
+    ctx.fillStyle = (x + y) % 2 ? 'rgba(255,205,120,0.13)' : 'rgba(255,205,120,0.21)';
     rr(px, py, CELL, CELL, 10); ctx.fill();
     const cell = S.board[y][x]; if (!cell) continue;
     const [cx, cy] = cellCenter(x, y);
@@ -278,7 +287,7 @@ function drawBoard() {
 function drawCauldron() {
   const cx = 972, cy = 560; const fill = Math.min(1, S.score / TARGET);
   // side table
-  ctx.fillStyle = '#4a2c14'; rr(838, 636, 268, 14, 5); ctx.fill(); ctx.fillRect(856, 650, 14, 66); ctx.fillRect(1074, 650, 14, 66);
+  ctx.fillStyle = '#6e4520'; rr(838, 636, 268, 14, 5); ctx.fill(); ctx.fillRect(856, 650, 14, 66); ctx.fillRect(1074, 650, 14, 66);
   // brew glow under pot
   const bg = ctx.createRadialGradient(cx, cy + 60, 8, cx, cy + 60, 120);
   bg.addColorStop(0, 'rgba(255,120,30,0.75)'); bg.addColorStop(1, 'rgba(255,120,30,0)');
@@ -292,13 +301,26 @@ function drawCauldron() {
   ctx.fillStyle = '#5b3413'; rr(cx - 78, cy + 58, 156, 14, 7); ctx.fill(); // logs bar
   // pot body
   const pot = ctx.createRadialGradient(cx - 30, cy - 30, 16, cx, cy, 105);
-  pot.addColorStop(0, '#5a5f6e'); pot.addColorStop(0.5, '#2c2f38'); pot.addColorStop(1, '#101116');
+  pot.addColorStop(0, '#8a90a0'); pot.addColorStop(0.5, '#4a4f5e'); pot.addColorStop(1, '#1d1f26');
   ctx.fillStyle = pot; ctx.beginPath(); ctx.arc(cx, cy, 96, 0, 7); ctx.fill();
-  ctx.fillStyle = '#17181d'; ctx.beginPath(); ctx.ellipse(cx, cy - 78, 84, 22, 0, 0, 7); ctx.fill();
+  // rim light: cool sheen top-left, warm fire bounce along the belly
+  ctx.lineWidth = 5; ctx.lineCap = 'round';
+  ctx.strokeStyle = 'rgba(205,225,255,0.4)';
+  ctx.beginPath(); ctx.arc(cx, cy, 90, Math.PI * 1.02, Math.PI * 1.52); ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,170,70,0.55)';
+  ctx.beginPath(); ctx.arc(cx, cy, 90, Math.PI * 0.18, Math.PI * 0.82); ctx.stroke();
+  ctx.lineCap = 'butt';
+  ctx.fillStyle = '#33363f'; ctx.beginPath(); ctx.ellipse(cx, cy - 78, 84, 22, 0, 0, 7); ctx.fill();
   // brew surface — color mixes toward rainbow as it fills
   const hue = 95 + fill * 180 + Math.sin(S.time * 0.05) * 12;
-  ctx.fillStyle = `hsl(${hue} 85% ${52 + S.brewGlow * 12}%)`;
+  ctx.save();
+  ctx.shadowColor = `hsl(${hue} 95% 60%)`; ctx.shadowBlur = 26;
+  ctx.fillStyle = `hsl(${hue} 90% ${60 + S.brewGlow * 10}%)`;
   ctx.beginPath(); ctx.ellipse(cx, cy - 78, 74, 17, 0, 0, 7); ctx.fill();
+  ctx.restore();
+  // glossy sheen on the brew
+  ctx.fillStyle = 'rgba(255,255,255,0.38)';
+  ctx.beginPath(); ctx.ellipse(cx - 26, cy - 83, 26, 6, -0.15, 0, 7); ctx.fill();
   // bubbles
   const rngB = createRandom(99);
   for (let i = 0; i < 9; i++) {
@@ -312,19 +334,23 @@ function drawCauldron() {
   }
   // brew meter (right of cauldron)
   const mx = 1096, my = 300, mh = 250;
-  ctx.fillStyle = '#170d06'; rr(mx, my, 30, mh, 14); ctx.fill();
-  ctx.strokeStyle = '#8a6a3b'; ctx.lineWidth = 2.5; rr(mx, my, 30, mh, 14); ctx.stroke();
+  ctx.fillStyle = '#2a1608'; rr(mx, my, 30, mh, 14); ctx.fill();
+  ctx.strokeStyle = '#c99a4e'; ctx.lineWidth = 2.5; rr(mx, my, 30, mh, 14); ctx.stroke();
   const fh2 = mh * fill;
   const mg = ctx.createLinearGradient(0, my + mh, 0, my);
-  mg.addColorStop(0, '#37d353'); mg.addColorStop(0.6, '#a855f7'); mg.addColorStop(1, '#ffd166');
-  ctx.fillStyle = mg; if (fh2 > 4) { rr(mx + 4, my + mh - fh2 + 4, 22, fh2 - 6, 10); ctx.fill(); }
-  ctx.fillStyle = '#ffe9b8'; ctx.font = 'bold 14px system-ui'; ctx.textAlign = 'center';
+  mg.addColorStop(0, '#3ee065'); mg.addColorStop(0.6, '#bb6bff'); mg.addColorStop(1, '#ffd166');
+  if (fh2 > 4) {
+    ctx.save(); ctx.shadowColor = '#bb6bff'; ctx.shadowBlur = 14;
+    ctx.fillStyle = mg; rr(mx + 4, my + mh - fh2 + 4, 22, fh2 - 6, 10); ctx.fill(); ctx.restore();
+    ctx.fillStyle = 'rgba(255,255,255,0.45)'; rr(mx + 8, my + mh - fh2 + 8, 6, Math.max(4, fh2 - 14), 3); ctx.fill();
+  }
+  ctx.fillStyle = '#ffe9b8'; ctx.font = 'bold 15px system-ui'; ctx.textAlign = 'center';
   ctx.fillText('BREW', mx + 15, my - 12);
-  ctx.font = 'bold 16px system-ui'; ctx.fillText(`${Math.round(fill * 100)}%`, mx + 15, my + mh + 24);
+  ctx.font = 'bold 19px system-ui'; ctx.fillText(`${Math.round(fill * 100)}%`, mx + 15, my + mh + 26);
 }
 function drawHUD() {
-  ctx.fillStyle = 'rgba(16,8,3,0.82)'; rr(232, 26, 816, 104, 16); ctx.fill();
-  ctx.strokeStyle = 'rgba(255,190,90,0.4)'; ctx.lineWidth = 2; rr(232, 26, 816, 104, 16); ctx.stroke();
+  ctx.fillStyle = 'rgba(58,32,12,0.88)'; rr(232, 26, 816, 104, 16); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,190,90,0.55)'; ctx.lineWidth = 2; rr(232, 26, 816, 104, 16); ctx.stroke();
   ctx.textAlign = 'left'; ctx.fillStyle = '#ffd166';
   ctx.font = '900 34px system-ui'; ctx.fillText("ALCHEMIST'S CASCADE", 256, 66);
   ctx.font = '600 17px system-ui'; ctx.fillStyle = '#ffe9b8';
@@ -351,7 +377,7 @@ function drawParticles() {
 }
 function panel(title, sub, lines, accent, dim = true) {
   if (dim) { ctx.fillStyle = 'rgba(10,5,2,0.62)'; ctx.fillRect(0, 0, W, H); }
-  ctx.fillStyle = '#241207'; rr(330, 218, 620, 330, 22); ctx.fill();
+  ctx.fillStyle = '#2f1c0b'; rr(330, 218, 620, 330, 22); ctx.fill();
   ctx.strokeStyle = accent; ctx.lineWidth = 3; rr(330, 218, 620, 330, 22); ctx.stroke();
   ctx.textAlign = 'center'; ctx.fillStyle = accent; ctx.font = '900 52px system-ui';
   ctx.fillText(title, 640, 308);
@@ -359,13 +385,26 @@ function panel(title, sub, lines, accent, dim = true) {
   ctx.font = '600 20px system-ui'; let y = 402;
   for (const l of lines) { ctx.fillText(l, 640, y); y += 34; }
 }
+// Title screen: slim banner along the bottom so the live grid and the
+// cauldron — the game's best assets — stay fully visible on the cover frame.
+function drawTitleBanner() {
+  ctx.fillStyle = 'rgba(38,20,7,0.94)'; rr(70, 682, 1140, 112, 18); ctx.fill();
+  ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 3; rr(70, 682, 1140, 112, 18); ctx.stroke();
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#ffd166'; ctx.font = '900 34px system-ui';
+  ctx.fillText("ALCHEMIST'S CASCADE", 640, 722);
+  ctx.fillStyle = '#ffe9b8'; ctx.font = '700 18px system-ui';
+  ctx.fillText('A potion match-3 — brew the great elixir!', 640, 748);
+  ctx.font = '600 15px system-ui';
+  ctx.fillText('Click a gem, then a neighbour — or drag — to swap · Match 3+ bursts ingredients into the cauldron', 640, 772);
+  ctx.fillText('Cascades multiply your combo · Reach 1,500 in 30 moves · Keys: arrows + Enter · R restarts · Click anywhere to start!', 640, 790);
+}
 function draw() {
   ctx.setTransform(canvas.width / W, 0, 0, canvas.height / H, 0, 0);
   S.time++;
   drawBackground(); drawBoard(); drawCauldron(); drawHUD(); drawParticles();
   if (S.comboTimer > 0) S.comboTimer--;
-  if (S.screen === 'title') panel("ALCHEMIST'S CASCADE", 'A potion match-3 — brew the great elixir!',
-    ['Click a gem, then a neighbour — or drag — to swap.', 'Match 3+ to burst ingredients into the cauldron.', 'Cascades multiply your combo. Reach 1,500 in 30 moves!', 'Keys: arrows + Enter to swap · R restarts', 'Click anywhere to start brewing'], '#ffd166', false);
+  if (S.screen === 'title') drawTitleBanner();
   if (S.screen === 'end' && S.endKind === 'win') panel('BREW COMPLETE!', `The great elixir is ready — score ${S.score}!`,
     [`Target ${TARGET} reached with ${S.moves} moves to spare.`, 'The cauldron bubbles over with rainbow brew.', 'Press R or click to brew again'], '#7CFC9A');
   if (S.screen === 'end' && S.endKind === 'lose') panel('THE BREW FIZZLED…', `Out of moves at ${S.score} / ${TARGET}.`,
